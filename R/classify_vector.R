@@ -7,14 +7,14 @@
 #' @export
 #'
 #' @author Emanuel Sommer
-classify_vector <- function(field, cat_thres = 30){
+classify_vector <- function(x, cat_thres = 30){
   if(!is.numeric(cat_thres)){
     stop("The cat_thres argument must be numeric!")
   } else if(cat_thres < 0){
     stop("The cat_thres argument must be non negative!")
   }
-  act_class <- class(field)
-  num_unique <- length(unique(field))
+  act_class <- class(x)
+  num_unique <- length(unique(x))
 
   if(("numeric" %in% act_class && num_unique > cat_thres) |
       ("integer" %in% act_class && num_unique > cat_thres)){
