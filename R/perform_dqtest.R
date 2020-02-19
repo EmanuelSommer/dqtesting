@@ -10,7 +10,13 @@ perform_dqtest <- function(x,
                            tz = NULL, # can exchange the timezone else timezone of the input
                            exclude_values = NULL, #numeric value for continuous data # POISXct for datetime or Date for date #character for cat
                            exclude_smaller_than = NULL, #numeric value for continuous data # POISXct for datetime or Date for date
-                           exclude_greater_than = NULL #numeric value for continuous data # POISXct for datetime or Date for date
+                           exclude_greater_than = NULL, #numeric value for continuous data # POISXct for datetime or Date for date
+                           plot_col1 = "darkviolet", #primary plot color
+                           plot_col2 = NULL, # secondary plot color (for example for range bounds, or unallowed categories)
+                           bin_num = 100, #The number of bins of the histogram (for continuous, date and datetime input). Must be given as a positive integer value.
+                           alpha = 0.8, #A numeric value between 0 and 1 to adjust the transparancy of the plots.
+                           rel = FALSE, #Logical value indicating whether the count or the density should be shown on the y axis of the diagnostic plots)
+                           orig_proportions = TRUE #logical value indicating whether for categorical input in the relative barplot the length before exclutions should be used for the calculation of the proportions. If TRUE the original length will be used.
                            ){
   #check for valid input
   if(!is.null(dim(x)) && !is.list(x)){stop("x must be a single vector")}
@@ -89,6 +95,19 @@ perform_dqtest <- function(x,
       }
       output_list$range_check <- range_check_num
     }
+    # diagnostic plots:
+    output_list$boxplot <- cont_boxplot(x = x,
+                                        var_name = var_name,
+                                        color = plot_col1)
+    output_list$hist <- hist_cont(x = x,
+                                  var_name = var_name,
+                                  color = plot_col1,
+                                  range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                  bin_num = bin_num,
+                                  alpha = alpha,
+                                  range_min = range_min,
+                                  range_max = range_max,
+                                  rel = rel)
   } else if(classification == "cat"){ ######################################################################################
     #convert to a factor
     x_factor <- as.factor(x)
@@ -124,6 +143,25 @@ perform_dqtest <- function(x,
       output_list$cat_check <- dplyr::if_else(all(levels(x_factor) %in% categories),
                                       "Only the required categories are present.",
                                       "There are unspecified categories!")
+    }
+    # diagnostic barplot
+    if(orig_proportions){
+      output_list$barplot <- bar_cat(x_factor = x_factor,
+                                     var_name = var_name,
+                                     categories = categories,
+                                     length_original = length_original,
+                                     color1 = plot_col1,
+                                     color2 = ifelse(is.null(plot_col2),"yellow2",plot_col2),
+                                     alpha = alpha,
+                                     rel = rel)
+    } else {
+      output_list$barplot <- bar_cat(x_factor = x_factor,
+                                     var_name = var_name,
+                                     categories = categories,
+                                     color1 = plot_col1,
+                                     color2 = ifelse(is.null(plot_col2),"yellow2",plot_col2),
+                                     alpha = alpha,
+                                     rel = rel)
     }
   } else if(classification == "date"){ #####################################################################################
     # exclude values if requested
@@ -178,6 +216,60 @@ perform_dqtest <- function(x,
       }
       output_list$range_check <- range_check_date
     }
+    # diagnostic plots
+    output_list$hist_date <- hist_date(x = x,
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = range_min,
+                                       range_max = range_max,
+                                       rel = rel)
+    output_list$hist_year <- hist_cont(x = lubridate::year(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = ifelse(is.null(range_min),-Inf,lubridate::year(range_min)),
+                                       range_max = ifelse(is.null(range_max),Inf,lubridate::year(range_max)),
+                                       rel = rel)
+    output_list$hist_month <- hist_cont(x = lubridate::month(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = NULL,
+                                       range_max = NULL,
+                                       rel = rel) + coord_cartesian(xlim = c(1,12)) + scale_x_continuous(breaks = 1:12)
+    output_list$hist_week <- hist_cont(x = lubridate::week(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = NULL,
+                                       range_max = NULL,
+                                       rel = rel) + coord_cartesian(xlim = c(0,53)) + scale_x_continuous(breaks = (1:30)*5)
+    output_list$hist_wday <- bar_cat(x_factor = lubridate::wday(x = x, label = TRUE, abbr = FALSE, locale = "us"),
+                                     var_name = var_name,
+                                     categories = NULL,
+                                     length_original = NULL,
+                                     color1 = plot_col1,
+                                     color2 = "yellow2",
+                                     alpha = alpha,
+                                     rel = rel)
+    output_list$hist_day <- hist_cont(x = lubridate::day(x),
+                                      var_name = var_name,
+                                      color = plot_col1,
+                                      range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                      bin_num = bin_num,
+                                      alpha = alpha,
+                                      range_min = NULL,
+                                      range_max = NULL,
+                                      rel = rel) + coord_cartesian(xlim = c(1,31)) + scale_x_continuous(breaks = (1:20)*2)
   } else if(classification == "datetime"){ #################################################################################
     # convert into POSIXct (from potentially POSIXlt) and adjust timezone
     if(is.null(tz)){
@@ -236,6 +328,87 @@ perform_dqtest <- function(x,
       }
       output_list$range_check <- range_check_datetime
     }
+    # diagnostic plots
+    output_list$hist_datetime <- hist_datetime(x = x,
+                                               var_name = var_name,
+                                               color = plot_col1,
+                                               range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                               bin_num = bin_num,
+                                               alpha = alpha,
+                                               range_min = range_min,
+                                               range_max = range_max,
+                                               rel = rel)
+    output_list$hist_year <- hist_cont(x = lubridate::year(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = ifelse(is.null(range_min),-Inf,lubridate::year(range_min)),
+                                       range_max = ifelse(is.null(range_max),Inf,lubridate::year(range_max)),
+                                       rel = rel)
+    output_list$hist_month <- hist_cont(x = lubridate::month(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = NULL,
+                                       range_max = NULL,
+                                       rel = rel) + coord_cartesian(xlim = c(1,12)) + scale_x_continuous(breaks = 1:12)
+    output_list$hist_week <- hist_cont(x = lubridate::week(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = NULL,
+                                       range_max = NULL,
+                                       rel = rel) + coord_cartesian(xlim = c(0,53)) + scale_x_continuous(breaks = (1:30)*5)
+    output_list$hist_wday <- bar_cat(x_factor = lubridate::wday(x = x, label = TRUE, abbr = FALSE, locale = "us"),
+                                     var_name = var_name,
+                                     categories = NULL,
+                                     length_original = NULL,
+                                     color1 = plot_col1,
+                                     color2 = "yellow2",
+                                     alpha = alpha,
+                                     rel = rel)
+    output_list$hist_day <- hist_cont(x = lubridate::day(x),
+                                      var_name = var_name,
+                                      color = plot_col1,
+                                      range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                      bin_num = bin_num,
+                                      alpha = alpha,
+                                      range_min = NULL,
+                                      range_max = NULL,
+                                      rel = rel) + coord_cartesian(xlim = c(1,31)) + scale_x_continuous(breaks = (1:20)*2)
+    output_list$hist_hour <- hist_cont(x = lubridate::hour(x),
+                                       var_name = var_name,
+                                       color = plot_col1,
+                                       range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                       bin_num = bin_num,
+                                       alpha = alpha,
+                                       range_min = NULL,
+                                       range_max = NULL,
+                                       rel = rel) + coord_cartesian(xlim = c(0,24)) + scale_x_continuous(breaks = 0:24)
+    output_list$hist_minute <- hist_cont(x = lubridate::minute(x),
+                                         var_name = var_name,
+                                         color = plot_col1,
+                                         range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                         bin_num = bin_num,
+                                         alpha = alpha,
+                                         range_min = NULL,
+                                         range_max = NULL,
+                                         rel = rel) + coord_cartesian(xlim = c(0,60)) + scale_x_continuous(breaks = (1:20)*5)
+    output_list$hist_second <- hist_cont(x = lubridate::second(x),
+                                         var_name = var_name,
+                                         color = plot_col1,
+                                         range_col = ifelse(is.null(plot_col2),"black",plot_col2),
+                                         bin_num = bin_num,
+                                         alpha = alpha,
+                                         range_min = NULL,
+                                         range_max = NULL,
+                                         rel = rel) + coord_cartesian(xlim = c(0,60)) + scale_x_continuous(breaks = (1:20)*5)
   } else{
     stop(paste("Class of the input vector not specified!"))
   }

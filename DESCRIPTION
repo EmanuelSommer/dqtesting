@@ -15,4 +15,6 @@ Imports:
     lubridate,
     e1071,
     dplyr,
-    tibble
+    tibble,
+    ggplot2
+RoxygenNote: 7.0.2

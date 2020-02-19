@@ -401,3 +401,60 @@ test_that("Range check datetime", {
                               range_min = "2000-01-01", range_max = as.Date("2010-11-10"))$range_check)
 })
 
+
+
+##############################################################################################################
+#
+#                        Checks plots
+#
+##############################################################################################################
+
+test_that("continuous plots are ggplots", {
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = c(1:100,NA), range_min = 11, range_max = 99)$boxplot))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = c(1:100,NA), range_min = 11, range_max = 99)$hist))
+})
+
+test_that("categorical plot is ggplot", {
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = c(NA,rep("abc",4),rep("def",3),"xyz","test"),
+                                                categories = c("abc","def","test","xyz","ghi"))$barplot))
+})
+
+test_that("date plots are ggplots", {
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_date))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_year))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_month))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_week))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_wday))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.Date(c("2000-01-01",rep("2001-02-01",10),"2010-11-11")),
+                                                range_min = as.Date("2000-01-01"), range_max = as.Date("2010-11-10"))$hist_day))
+})
+
+test_that("datetime plots are ggplots", {
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_datetime))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_year))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_month))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_week))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_wday))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_day))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_hour))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_minute))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = as.POSIXct(c("2000-01-01 00:11:32",rep("2001-02-01 11:02:00",10),"2010-11-11"), tz = "UTC"),
+                                                range_min = as.POSIXct("2000-01-02", tz = "UTC"), range_max = as.POSIXct("2010-11-12", tz = "UTC"))$hist_second))
+})
+
+
+
+
