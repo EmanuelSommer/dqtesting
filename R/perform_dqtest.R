@@ -1,22 +1,80 @@
-
-# imports    tibble dyplr
-
+#' Univariate data quality testing.
+#'
+#' The function perform_dqtest supplies the user with a list that contains the most important information to  perform  a  univariate data quality test.
+#'
+#' \itemize{
+#'    \item{The elements of the list vary depending on the input except for the element \code{pre_scheduled_return} which indicates whether all the values of x are missing values (-> "Yes, all NA."), or whether all values of x were excluded prior to the analysis (-> "Yes, all not missing excluded.") else the element contains "No.".}
+#'    \item{The function first of all classifies the input vector with the help of the \code{\link{classify_vector}} function and further analysis is performed depending on this classification. One can access the classification via the \code{classification} element of the list.}
+#'    \item{The class type of the initial vector (like numeric or POSIXct) can be accessed via the \code{class_type} element.}
+#'    \item{The original length of the input vector can be accessed via the \code{initial_length} element.}
+#'    \item{The absolute and relative amount of NAs (missing values) can be accessed via the \code{abs_na} and \code{rel_na} elements.}
+#' }
+#'
+#' The other elements of the list are then dependend on the initial classification:
+#' \describe{
+#'    \item{\strong{continuous}}{\itemize{
+#'    \item{The \code{exclusions} element either contains the character value "No exclusions." or a list with the relative and absolute amount of exclusions.}
+#'    \item{The \code{stat_summary} element contains a list with the mean, standard deviation, skewness and the seq(0,1,0.1) quantiles (11).}
+#'    \item{The \code{range_check} element contains a character value the tells the user about the result of the range check.}
+#'    \item{The \code{boxplot} and \code{hist} return two ggplot objects for diagnostic purposes.}}}
+#'    \item{\strong{categorical}}{\itemize{
+#'    \item{The \code{exclusions} element either contains the character value "No exclusions." or a list with the relative and absolute amount of exclusions.}
+#'    \item{The \code{stat_summary} element contains a tibble with the rows representing all unique categories and with the columns showing the absolute and relative appearances ordered descending by absolute appearances.}
+#'    \item{The \code{cat_check} element contains a character value the tells the user about the result of the categories check (whether all actual categories are included in the supplied ones).}
+#'    \item{The \code{barplot} returns a ggplot object for diagnostic purposes.}}}
+#'    \item{\strong{date}}{\itemize{
+#'    \item{The \code{exclusions} element either contains the character value "No exclusions." or a list with the relative and absolute amount of exclusions.}
+#'    \item{The \code{stat_summary} element contains a list with the mean and the seq(0,1,0.1) quantiles (11).}
+#'    \item{The \code{range_check} element contains a character value the tells the user about the result of the range check.}
+#'    \item{The \code{hist_date},\code{hist_year}, \code{hist_month}, \code{hist_week},\code{hist_wday} and \code{hist_day} return ggplot objects for diagnostic purposes.}}}
+#'    \item{\strong{datetime}}{\itemize{
+#'    \item{The \code{exclusions} element either contains the character value "No exclusions." or a list with the relative and absolute amount of exclusions.}
+#'    \item{The \code{stat_summary} element contains a list with the mean and the seq(0,1,0.1) quantiles (11).}
+#'    \item{The \code{range_check} element contains a character value the tells the user about the result of the range check.}
+#'    \item{The \code{hist_date},\code{hist_year}, \code{hist_month}, \code{hist_week},\code{hist_wday}, \code{hist_day}, \code{hist_hour}, \code{hist_minute} and \code{hist_second} return ggplot objects for diagnostic purposes.}}}
+#' }
+#'
+#' @param x A single vector (the allowed classes are: numeric, integer, factor, logical, character, POSIXct/ POSIXlt for datetimes and Date for dates.)
+#' @param var_name The variable name to be used in diagnostic plots. Must be given as character.
+#' @param cat_thres A non negative integer value to set the number of unique values a numeric or integer field needs to have to be classified as continuous. (default is set to 30)
+#' @param categories A character vector of categories. For categorical input the categories check will be based on this vector.
+#' @param range_min For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the lower range bound.
+#' @param range_max For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the upper range bound.
+#' @param tz If the output should be in another timezone than the input data, one can set the timezone here by supplying a character vector with a valid timezone shortcut.
+#' @param exclude_values For continuous input data a numeric, for categorical input a character, for Date input a Date and for datetime input a POSIXct vector. The values of this vector will be excluded prior to the analysis.
+#' @param exclude_smaller_than For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. values strictly smaller than this value will be excluded prior to the analysis.
+#' @param exclude_greater_than For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. values strictly greater than this value will be excluded prior to the analysis.
+#' @param plot_col1 The primary plot color. Must be given as character.
+#' @param plot_col2 The secondary plot color. For example for range bounds or unallowed categories. Must be given as character.
+#' @param bin_num The number of bins of the histogram (for continuous, date and datetime input). Must be given as a positive integer value.
+#' @param alpha A numeric value between 0 and 1 to adjust the transparancy of the plots.
+#' @param rel A logical value indicating whether the count or the density should be shown on the y axis of the diagnostic plots. (default: count)
+#' @param orig_proportions A logical value indicating whether for categorical input in the relative barplot the length before exclutions should be used for the calculation of the proportions. If TRUE the original length will be used.
+#'
+#' @return A list. More details above.
+#' @export
+#'
+#' @import dplyr
+#' @import tibble
+#'
+#' @author Emanuel Sommer
+#' @seealso \code{\link{classify_vector}}, \code{\link{bar_cat}}, \code{\link{cont_boxplot}}, \code{\link{hist_cont}}, \code{\link{hist_date}}, \code{\link{hist_datetime}}
 perform_dqtest <- function(x,
-                           var_name = "", # vaiable name for nicer plots
-                           cat_thres = 30, # int value
-                           categories = NULL, # character vector
-                           range_min = NULL,# else Date minimum 0000-01-01, max 9999-12-31
+                           var_name = "",
+                           cat_thres = 30,
+                           categories = NULL,
+                           range_min = NULL,
                            range_max = NULL,
-                           tz = NULL, # can exchange the timezone else timezone of the input
-                           exclude_values = NULL, #numeric value for continuous data # POISXct for datetime or Date for date #character for cat
-                           exclude_smaller_than = NULL, #numeric value for continuous data # POISXct for datetime or Date for date
-                           exclude_greater_than = NULL, #numeric value for continuous data # POISXct for datetime or Date for date
-                           plot_col1 = "darkviolet", #primary plot color
-                           plot_col2 = NULL, # secondary plot color (for example for range bounds, or unallowed categories)
-                           bin_num = 100, #The number of bins of the histogram (for continuous, date and datetime input). Must be given as a positive integer value.
-                           alpha = 0.8, #A numeric value between 0 and 1 to adjust the transparancy of the plots.
-                           rel = FALSE, #Logical value indicating whether the count or the density should be shown on the y axis of the diagnostic plots)
-                           orig_proportions = TRUE #logical value indicating whether for categorical input in the relative barplot the length before exclutions should be used for the calculation of the proportions. If TRUE the original length will be used.
+                           tz = NULL,
+                           exclude_values = NULL,
+                           exclude_smaller_than = NULL,
+                           exclude_greater_than = NULL,
+                           plot_col1 = "darkviolet",
+                           plot_col2 = NULL,
+                           bin_num = 100,
+                           alpha = 0.8,
+                           rel = FALSE,
+                           orig_proportions = TRUE
                            ){
   #check for valid input
   if(!is.null(dim(x)) && !is.list(x)){stop("x must be a single vector")}
@@ -68,8 +126,8 @@ perform_dqtest <- function(x,
     # summary statistics
     summary_cont_list <- list(
       mean = mean(x, na.rm = TRUE),
-      sd = sd(x, na.rm = TRUE),
-      quantiles11 = quantile(x, na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE),
+      sd = stats::sd(x, na.rm = TRUE),
+      quantiles11 = stats::quantile(x, na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE),
       skew = e1071::skewness(x, na.rm = TRUE)
     )
     output_list$stat_summary <- summary_cont_list
@@ -191,7 +249,7 @@ perform_dqtest <- function(x,
     # summary statistics
     summary_date_list <- list(
       mean = mean(x, na.rm = TRUE),
-      quantiles11 = lubridate::date(quantile(as.POSIXct(x), na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE))
+      quantiles11 = lubridate::date(stats::quantile(as.POSIXct(x), na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE))
     )
     output_list$stat_summary <- summary_date_list
     # range check: (if ranges were supplied)
@@ -303,7 +361,7 @@ perform_dqtest <- function(x,
     # summary statistics
     summary_datetime_list <- list(
       mean = mean(x, na.rm = TRUE),
-      quantiles11 = quantile(x, na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE)
+      quantiles11 = stats::quantile(x, na.rm = TRUE, probs = seq(0,1,0.1), names = FALSE)
     )
     output_list$stat_summary <- summary_datetime_list
     # range check: (if ranges were supplied)

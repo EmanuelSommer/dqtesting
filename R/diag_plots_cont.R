@@ -55,7 +55,7 @@ cont_boxplot <- function(x,
 #'
 #' @author Emanuel Sommer
 #'
-#' @examples  hist_cont(rchisq(100, df = 0.5), title = "Test-title", range_min = -4, range_max = 3)
+#' @examples  hist_cont(rchisq(100, df = 0.5), ttl = "Test-title", range_min = -4, range_max = 3)
 hist_cont <- function(x,
                       var_name = "",
                       color = "darkviolet",

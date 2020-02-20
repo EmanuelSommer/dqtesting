@@ -7,9 +7,9 @@
 classify_vector(x, cat_thres = 30)
 }
 \arguments{
-\item{cat_thres}{non negative integer value to set the number of unique values a numeric or integer field needs to have to be classified as continuous. (default is set to 30)}
+\item{x}{a single vector (the allowed classes are: numeric, integer, factor, logical, character, POSIXct/ POSIXlt for datetimes and Date for dates.)}
 
-\item{field}{a single vector (the allowed classes are: numeric, integer, factor, logical, character, POSIXct/ POSIXlt for datetimes and Date for dates.}
+\item{cat_thres}{non negative integer value to set the number of unique values a numeric or integer field needs to have to be classified as continuous. (default is set to 30)}
 }
 \value{
 a character string with either "cont", "cat", "datetime or "date"

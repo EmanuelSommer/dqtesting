@@ -16,5 +16,6 @@ Imports:
     e1071,
     dplyr,
     tibble,
-    ggplot2
+    ggplot2,
+    stats
 RoxygenNote: 7.0.2

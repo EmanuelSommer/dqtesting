@@ -1,6 +1,6 @@
 #' Determine whether the vector will be classified as: continuous, categorical, datetime or date
 #'
-#' @param field  a single vector (the allowed classes are: numeric, integer, factor, logical, character, POSIXct/ POSIXlt for datetimes and Date for dates.
+#' @param x  a single vector (the allowed classes are: numeric, integer, factor, logical, character, POSIXct/ POSIXlt for datetimes and Date for dates.)
 #' @param cat_thres non negative integer value to set the number of unique values a numeric or integer field needs to have to be classified as continuous. (default is set to 30)
 #'
 #' @return a character string with either "cont", "cat", "datetime or "date"

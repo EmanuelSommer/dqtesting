@@ -45,7 +45,7 @@ a ggplot2 object
 Generate a histogram of a numeric input vector. Moreover range bounds can be included in the visualiation and a relative or absolute histogram can be selected
 }
 \examples{
- hist_cont(rchisq(100, df = 0.5), title = "Test-title", range_min = -4, range_max = 3)
+ hist_cont(rchisq(100, df = 0.5), ttl = "Test-title", range_min = -4, range_max = 3)
 }
 \author{
 Emanuel Sommer
