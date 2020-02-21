@@ -1,0 +1,104 @@
+---
+output: github_document
+---
+
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# dqtesting
+
+The goal of the package is to provide an easy toolset for data quality testing. The main function `perform_dqtest` returns a list containing various results from an univariate DQ test. Moreover functions are provided that allow a very easy interface to the Local Outlier Factor Algorithm for multivariate outlier detection (therefore automated hyperparameter tuning). 
+
+## Installation
+
+You can install the released version of dqtesting from Github in R with the following line of code:
+
+``` {r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("EmanuelSommer/dqtesting")
+```
+
+## Some examples
+
+The `dummy_data` is a dummy data set contained in the package.
+
+```{r data}
+library(dqtesting)
+# quick overview of the dummy data
+str(dummy_data)
+```
+
+These are basic examples which show you how to solve some common problems:
+
+Given: The data should not contain missing values, the data should have a certain range or contain categories and moreover some values can be excluded as they represent special cases. To check these data quality requirements the function `perform_dqtest` can be used in the following way. 
+
+```{r example}
+library(dqtesting)
+### first variable: char1 with allowed categories "Random Forest", "Linear Regression" and "SVM", "Neural Networks" should be excluded.
+dq_char <- perform_dqtest(dummy_data$char1,
+                          categories = c("Random Forest","Linear Regression","SVM"),
+                          exclude_values = "Neural Networks")
+# access the absolute and relative amount of NA's
+dq_char$abs_na
+dq_char$rel_na
+
+# access the absolute and relative amount of excluded values
+dq_char$exclusions$abs_excluded
+dq_char$exclusions$rel_excluded
+
+# access a statistical summary
+dq_char$stat_summary
+
+# access the categories check
+dq_char$cat_check
+
+# access a visualisation
+dq_char$barplot
+
+### second variable: num2 should be non negative
+dq_num <- perform_dqtest(dummy_data$num2, range_min = 0)
+
+# access the 0.4 quantile of the vector
+dq_num$stat_summary$quantiles11[4]
+
+# access the minimum of the vector
+dq_num$stat_summary$quantiles11[1]
+
+# access the range check
+dq_num$range_check
+
+# access a different visualisation
+dq_num$boxplot
+
+### third variable: datetime2
+dq_datetime <- perform_dqtest(dummy_data$datetime2)
+
+# access a visualisation about the weekdays
+dq_datetime$hist_wday
+```
+
+These were just a few examples of this very flexible function. 
+
+If multivariate outliers should be detected too, the package provides some useful functions:
+
+```{r example2}
+# perform the LOF Algorithm
+lof_list <- lof_fun(dummy_data[,c(3,4)])
+# extract the most suspicious values
+extract_rows_score(dummy_data[,c(3,4)],lof_list,threshold = 1.5)
+# visualize the results
+lof_vis(dummy_data[,c(3,4)],lof_list)
+```
+
+Detailed help pages are available for all functions. For example just type `?perform_dqtest` into the console.
+
+Have fun :)
+
+
