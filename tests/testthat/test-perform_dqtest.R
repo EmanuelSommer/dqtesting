@@ -416,7 +416,9 @@ test_that("continuous plots are ggplots", {
 
 test_that("categorical plot is ggplot", {
   expect_true(ggplot2::is.ggplot(perform_dqtest(x = c(NA,rep("abc",4),rep("def",3),"xyz","test"),
-                                                categories = c("abc","def","test","xyz","ghi"))$barplot))
+                                                categories = c("abc","def","test","xyz","ghi"), rel = FALSE,flip_axis = FALSE)$barplot))
+  expect_true(ggplot2::is.ggplot(perform_dqtest(x = c(NA,rep("abc",4),rep("def",3),"xyz","test"),
+                                                categories = c("abc","def","test","xyz","ghi"), rel = TRUE,flip_axis = TRUE)$barplot))
 })
 
 test_that("date plots are ggplots", {

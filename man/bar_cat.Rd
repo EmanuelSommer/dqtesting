@@ -13,7 +13,8 @@ bar_cat(
   color2 = "yellow2",
   alpha = 0.8,
   ttl = "",
-  rel = FALSE
+  rel = FALSE,
+  flip_axis = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ bar_cat(
 \item{ttl}{An optional title for the plot. Must be given as charcater.}
 
 \item{rel}{Logical value indicating whether the count or the density should be shown on the y axis. (default: count)}
+
+\item{flip_axis}{Logical value indicating whether categories should be shown on the x or y axis. (default: x axis) Especially for long category names one should consider the axis flip.}
 }
 \value{
 a ggplot2 object

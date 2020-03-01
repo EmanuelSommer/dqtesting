@@ -10,6 +10,7 @@
 #' @param alpha A numeric value between 0 and 1 to adjust the transparancy of the barplot.
 #' @param ttl An optional title for the plot. Must be given as charcater.
 #' @param rel Logical value indicating whether the count or the density should be shown on the y axis. (default: count)
+#' @param flip_axis Logical value indicating whether categories should be shown on the x or y axis. (default: x axis) Especially for long category names one should consider the axis flip.
 #'
 #' @return a ggplot2 object
 #' @export
@@ -27,11 +28,89 @@ bar_cat <-function(x_factor,
                    color2 = "yellow2",
                    alpha = 0.8,
                    ttl = "",
-                   rel = FALSE){
+                   rel = FALSE,
+                   flip_axis = FALSE){
   if(is.null(length_original)){
     length_original <- length(x_factor)
   }
-  if(rel){
+  if(flip_axis){
+    if(rel){
+      if(is.null(categories)){
+        tibble(x = x_factor) %>%
+          mutate(x = as.character(x)) %>%
+          count(x) %>%
+          rename(absolute = n)%>%
+          mutate(relative = absolute/length_original)%>%
+          arrange(desc(absolute),x) %>%
+          ggplot(aes(x = factor(x), y = relative))+
+          geom_bar(stat = "identity",col = color1,fill = color1, alpha = alpha)+
+          labs(y = "density",x = var_name,title = ttl)+
+          coord_flip(ylim = c(0,1))+
+          theme_bw()+
+          theme(panel.border = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                axis.line = element_line())
+      } else {
+        tibble(x = x_factor) %>%
+          mutate(x = as.character(x)) %>%
+          count(x) %>%
+          rename(absolute = n)%>%
+          mutate(relative = absolute/length_original,
+                 in_cat = if_else(x %in% categories,0,1),
+                 in_cat = as.factor(in_cat))%>%
+          arrange(desc(absolute),x) %>%
+          ggplot(aes(x = factor(x), y = relative,col = in_cat,fill = in_cat))+
+          geom_bar(stat = "identity", alpha = alpha)+
+          scale_discrete_manual(aesthetics = c("colour","fill"), values = c(color1, color2),name = "The category is one of the specified ones:",
+                                labels = c("Yes","No"))+
+          labs(y = "density",x = var_name,title = ttl)+
+          coord_flip(ylim = c(0,1))+
+          theme_bw()+
+          theme(panel.border = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                axis.line = element_line(),
+                legend.position = "bottom")
+      }
+    } else {
+      if(is.null(categories)){
+        tibble(x = x_factor) %>%
+          mutate(x = as.character(x)) %>%
+          count(x) %>%
+          rename(absolute = n)%>%
+          mutate(relative = absolute/length_original)%>%
+          arrange(desc(absolute),x) %>%
+          ggplot(aes(x = factor(x), y = absolute))+
+          geom_bar(stat = "identity",col = color1,fill = color1, alpha = alpha)+
+          labs(y = "count",x = var_name,title = ttl)+
+          coord_flip()+
+          theme_bw()+
+          theme(panel.border = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                axis.line = element_line())
+      } else {
+        tibble(x = x_factor) %>%
+          mutate(x = as.character(x)) %>%
+          count(x) %>%
+          rename(absolute = n)%>%
+          mutate(relative = absolute/length_original,
+                 in_cat = if_else(x %in% categories,0,1),
+                 in_cat = as.factor(in_cat))%>%
+          arrange(desc(absolute),x) %>%
+          ggplot(aes(x = factor(x), y = absolute,col = in_cat,fill = in_cat))+
+          geom_bar(stat = "identity", alpha = alpha)+
+          scale_discrete_manual(aesthetics = c("colour","fill"), values = c(color1, color2),name = "The category is one of the specified ones:",
+                                labels = c("Yes","No"))+
+          labs(y = "count",x = var_name,title = ttl)+
+          coord_flip()+
+          theme_bw()+
+          theme(panel.border = element_blank(),
+                panel.grid.minor.x = element_blank(),
+                axis.line = element_line(),
+                legend.position = "bottom")
+      }
+    }
+  } else {
+    if(rel){
     if(is.null(categories)){
       tibble(x = x_factor) %>%
         mutate(x = as.character(x)) %>%
@@ -46,8 +125,7 @@ bar_cat <-function(x_factor,
           theme_bw()+
           theme(panel.border = element_blank(),
                 panel.grid.minor.x = element_blank(),
-                axis.line = element_line(),
-                axis.text.x = element_text(angle = 45,hjust = 1))
+                axis.line = element_line())
     } else {
       tibble(x = x_factor) %>%
         mutate(x = as.character(x)) %>%
@@ -67,7 +145,6 @@ bar_cat <-function(x_factor,
         theme(panel.border = element_blank(),
               panel.grid.minor.x = element_blank(),
               axis.line = element_line(),
-              axis.text.x = element_text(angle = 45,hjust = 1),
               legend.position = "bottom")
     }
   } else {
@@ -84,8 +161,7 @@ bar_cat <-function(x_factor,
         theme_bw()+
         theme(panel.border = element_blank(),
               panel.grid.minor.x = element_blank(),
-              axis.line = element_line(),
-              axis.text.x = element_text(angle = 45,hjust = 1))
+              axis.line = element_line())
     } else {
       tibble(x = x_factor) %>%
         mutate(x = as.character(x)) %>%
@@ -104,8 +180,8 @@ bar_cat <-function(x_factor,
         theme(panel.border = element_blank(),
               panel.grid.minor.x = element_blank(),
               axis.line = element_line(),
-              axis.text.x = element_text(angle = 45,hjust = 1),
               legend.position = "bottom")
     }
+  }
   }
 }

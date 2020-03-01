@@ -20,7 +20,8 @@ perform_dqtest(
   bin_num = 100,
   alpha = 0.8,
   rel = FALSE,
-  orig_proportions = TRUE
+  orig_proportions = TRUE,
+  flip_axis = FALSE
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ perform_dqtest(
 \item{rel}{A logical value indicating whether the count or the density should be shown on the y axis of the diagnostic plots. (default: count)}
 
 \item{orig_proportions}{A logical value indicating whether for categorical input in the relative barplot the length before exclutions should be used for the calculation of the proportions. If TRUE the original length will be used.}
+
+\item{flip_axis}{Logical value indicating whether in the barplot for categorical variables the categories should be shown on the x or y axis. (default: x axis) Especially for long category names one should consider the axis flip.}
 }
 \value{
 A list. More details above.

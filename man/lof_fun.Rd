@@ -28,8 +28,8 @@ k and then averages over all of these scores. This yields the final score that c
 The tuning vector is set up around the square root of the variable length (+/- 10) and no k under 10 will be used
 as the inventor of the LOF claims that this would yield to very unrobust scores. For the LOF-Algorithm the
 implementation of the dbscan package is used. Moreover the gower distance is used as the metric for the knn algorithm as it can also handle c
-categorical input. In this quite easy and naive implementation rows with NAs will be omitted. This can result in major problems
-if the percentage of missing values is relevant or if the missing values are missing due to a certain pattern.
+categorical input. In this implementation that opts for an easy to use approach, rows with NAs will be omitted. This can result in major problems
+if the percentage of missing values is relevant or if the missing values are missing due to a certain pattern. Prior imputing of the missing values is recommended.
 }
 \author{
 Emanuel Sommer
