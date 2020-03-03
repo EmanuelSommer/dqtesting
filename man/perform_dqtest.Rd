@@ -29,7 +29,7 @@ perform_dqtest(
 
 \item{var_name}{The variable name to be used in diagnostic plots. Must be given as character.}
 
-\item{cat_thres}{A non negative integer value to set the number of unique values a numeric or integer field needs to have to be classified as continuous. (default is set to 30)}
+\item{cat_thres}{A non negative integer value to set the number of unique values a numeric or integer vector needs to have to be classified as continuous. (default is set to 30)}
 
 \item{categories}{A character vector of categories. For categorical input the categories check will be based on this vector.}
 
