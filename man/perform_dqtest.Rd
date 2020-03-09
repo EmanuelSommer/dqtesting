@@ -33,9 +33,9 @@ perform_dqtest(
 
 \item{categories}{A character vector of categories. For categorical input the categories check will be based on this vector.}
 
-\item{range_min}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the lower range bound.}
+\item{range_min}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the lower range bound.}
 
-\item{range_max}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the upper range bound.}
+\item{range_max}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the upper range bound.}
 
 \item{tz}{If the output should be in another timezone than the input data, one can set the timezone here by supplying a character vector with a valid timezone shortcut.}
 

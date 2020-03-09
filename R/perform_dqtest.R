@@ -38,8 +38,8 @@
 #' @param var_name The variable name to be used in diagnostic plots. Must be given as character.
 #' @param cat_thres A non negative integer value to set the number of unique values a numeric or integer vector needs to have to be classified as continuous. (default is set to 30)
 #' @param categories A character vector of categories. For categorical input the categories check will be based on this vector.
-#' @param range_min For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the lower range bound.
-#' @param range_max For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is themn used in the range check as the upper range bound.
+#' @param range_min For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the lower range bound.
+#' @param range_max For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the upper range bound.
 #' @param tz If the output should be in another timezone than the input data, one can set the timezone here by supplying a character vector with a valid timezone shortcut.
 #' @param exclude_values For continuous input data a numeric, for categorical input a character, for Date input a Date and for datetime input a POSIXct vector. The values of this vector will be excluded prior to the analysis.
 #' @param exclude_smaller_than For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. values strictly smaller than this value will be excluded prior to the analysis.
