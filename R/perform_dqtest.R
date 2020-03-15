@@ -452,7 +452,7 @@ perform_dqtest <- function(x,
                                        alpha = alpha,
                                        range_min = NULL,
                                        range_max = NULL,
-                                       rel = rel) + coord_cartesian(xlim = c(0,24)) + scale_x_continuous(breaks = 0:24)
+                                       rel = rel) + coord_cartesian(xlim = c(0,24)) + scale_x_continuous(breaks = (0:12)*2)
     output_list$hist_minute <- hist_cont(x = lubridate::minute(x),
                                          var_name = var_name,
                                          color = plot_col1,
