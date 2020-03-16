@@ -4,7 +4,9 @@
 \name{dummy_data}
 \alias{dummy_data}
 \title{Dummy data}
-\format{An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 50 rows and 13 columns.}
+\format{
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 50 rows and 13 columns.
+}
 \usage{
 dummy_data
 }

@@ -40,7 +40,6 @@
 #' @param categories A character vector of categories. For categorical input the categories check will be based on this vector.
 #' @param range_min For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the lower range bound.
 #' @param range_max For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the upper range bound.
-#' @param tz If the output should be in another timezone than the input data, one can set the timezone here by supplying a character vector with a valid timezone shortcut.
 #' @param exclude_values For continuous input data a numeric, for categorical input a character, for Date input a Date and for datetime input a POSIXct vector. The values of this vector will be excluded prior to the analysis.
 #' @param exclude_smaller_than For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. values strictly smaller than this value will be excluded prior to the analysis.
 #' @param exclude_greater_than For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. values strictly greater than this value will be excluded prior to the analysis.
@@ -66,7 +65,6 @@ perform_dqtest <- function(x,
                            categories = NULL,
                            range_min = NULL,
                            range_max = NULL,
-                           tz = NULL,
                            exclude_values = NULL,
                            exclude_smaller_than = NULL,
                            exclude_greater_than = NULL,
@@ -81,7 +79,6 @@ perform_dqtest <- function(x,
   #check for valid input
   if(!is.null(dim(x)) && !is.list(x)){stop("x must be a single vector")}
   if(!is.character(var_name)){stop("If supplied the var_name argument must be character.")}
-  if(!(is.character(tz) | is.null(tz))){stop("If supplied the tz argument must be character.")}
   # check whether the vector x contains only missing values. In this case a further analysis is worthless.
   if(all(is.na(x))){
     return(list(pre_scheduled_return = "Yes, all NA."))
@@ -334,10 +331,7 @@ perform_dqtest <- function(x,
                                       rel = rel) + coord_cartesian(xlim = c(1,31)) + scale_x_continuous(breaks = (1:20)*2)
   } else if(classification == "datetime"){ #################################################################################
     # convert into POSIXct (from potentially POSIXlt) and adjust timezone
-    if(is.null(tz)){
-      tz <- lubridate::tz(x)
-    }
-    x <- as.POSIXct(x, tz = tz)
+    x <- as.POSIXct(x)
     # exclude values if requested
     if(!is.null(exclude_values)){
       if(!lubridate::is.POSIXct(exclude_values)){stop("For datetime input the values to be excluded must be given as POSIXct.")}
@@ -375,8 +369,8 @@ perform_dqtest <- function(x,
       if(!(is.null(range_min) | lubridate::is.POSIXct(range_min))){stop("The ranges for datetime input must be POSIXct if given.")}
       if(!(is.null(range_max) | lubridate::is.POSIXct(range_max))){stop("The ranges for datetime input must be POSIXct if given.")}
       # treat cases where only one range was supplied:
-      range_min <- dplyr::if_else(is.null(range_min), as.POSIXct("0000-01-01 00:00:00",tz = tz), range_min)
-      range_max <- dplyr::if_else(is.null(range_max), as.POSIXct("9999-12-31 23:59:59",tz = tz), range_max)
+      range_min <- dplyr::if_else(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min)
+      range_max <- dplyr::if_else(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max)
       act_min <- min(x,na.rm = T)
       act_max <- max(x,na.rm = T)
       if(act_min < range_min && act_max <= range_max){

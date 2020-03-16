@@ -11,7 +11,6 @@ perform_dqtest(
   categories = NULL,
   range_min = NULL,
   range_max = NULL,
-  tz = NULL,
   exclude_values = NULL,
   exclude_smaller_than = NULL,
   exclude_greater_than = NULL,
@@ -36,8 +35,6 @@ perform_dqtest(
 \item{range_min}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the lower range bound.}
 
 \item{range_max}{For continuous input data a numeric, for Date input a Date and for datetime input a POSIXct value. The value is then used in the range check as the upper range bound.}
-
-\item{tz}{If the output should be in another timezone than the input data, one can set the timezone here by supplying a character vector with a valid timezone shortcut.}
 
 \item{exclude_values}{For continuous input data a numeric, for categorical input a character, for Date input a Date and for datetime input a POSIXct vector. The values of this vector will be excluded prior to the analysis.}
 
