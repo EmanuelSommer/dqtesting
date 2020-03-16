@@ -8,6 +8,11 @@ provided that allow a very easy interface to the Local Outlier Factor
 Algorithm for multivariate outlier detection (therefore automated
 hyperparameter tuning).
 
+## Web Interface
+
+There is a web application to the package:
+[Link](https://esommer.shinyapps.io/dqtesting/)
+
 ## Installation
 
 You can install the released version of dqtesting from Github in R with

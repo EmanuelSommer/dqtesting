@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 
 The goal of the package is to provide an easy toolset for data quality testing. The main function `perform_dqtest` returns a list containing various results from an univariate DQ test. Moreover functions are provided that allow a very easy interface to the Local Outlier Factor Algorithm for multivariate outlier detection (therefore automated hyperparameter tuning). 
 
+## Web Interface
+
+There is a web application to the package: [Link](https://esommer.shinyapps.io/dqtesting/)
+
 ## Installation
 
 You can install the released version of dqtesting from Github in R with the following line of code:
