@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Emanuel Sommer <emanuel_sommer@gmx.de>
 Maintainer: Emanuel Sommer <emanuel_sommer@gmx.de>
 Description: The goal of the package is to provide an easy toolset for data quality testing. The main function perform_dqtest returns a list containing various results from an univariate DQ test. Moreover functions are provided that allow a very easy interface to the Local Outlier Factor Algorithm for multivariate outlier detection (therefore automated hyperparameter tuning). 
-License: GPL-2
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Suggests: 
