@@ -7,29 +7,28 @@
 #' @export
 #'
 #' @author Emanuel Sommer
-classify_vector <- function(x, cat_thres = 30){
-  if(!is.numeric(cat_thres)){
+classify_vector <- function(x, cat_thres = 30) {
+  if (!is.numeric(cat_thres)) {
     stop("The cat_thres argument must be numeric!")
-  } else if(cat_thres < 0){
+  } else if (cat_thres < 0) {
     stop("The cat_thres argument must be non negative!")
   }
   act_class <- class(x)
   num_unique <- length(unique(x))
 
-  if(("numeric" %in% act_class && num_unique > cat_thres) |
-      ("integer" %in% act_class && num_unique > cat_thres)){
+  if (("numeric" %in% act_class && num_unique > cat_thres) |
+    ("integer" %in% act_class && num_unique > cat_thres)) {
     return("cont")
-  } else if ("character" %in% act_class | "factor" %in% act_class   |
-              ("integer" %in% act_class && num_unique <= cat_thres) |
-              ("numeric" %in% act_class && num_unique <= cat_thres) |
-              "logical"%in% act_class){
+  } else if ("character" %in% act_class | "factor" %in% act_class |
+    ("integer" %in% act_class && num_unique <= cat_thres) |
+    ("numeric" %in% act_class && num_unique <= cat_thres) |
+    "logical" %in% act_class) {
     return("cat")
-  } else if ("POSIXct" %in% act_class | "POSIXlt" %in% act_class){
+  } else if ("POSIXct" %in% act_class | "POSIXlt" %in% act_class) {
     return("datetime")
-  } else if ("Date" %in% act_class){
+  } else if ("Date" %in% act_class) {
     return("date")
   } else {
-    stop(paste("Class of the input vector not specified:",act_class))
+    stop(paste("Class of the input vector not specified:", act_class))
   }
 }
-

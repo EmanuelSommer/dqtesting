@@ -14,23 +14,26 @@
 #'
 #' @author Emanuel Sommer
 #'
-#' @examples cont_boxplot(runif(100))
+#' @examples
+#' cont_boxplot(runif(100))
 cont_boxplot <- function(x,
                          var_name = "",
                          color = "darkviolet",
                          size = 1,
                          width = 0.35,
-                         title = ""){
-  ggplot(tibble(x = x),aes(x=1,y=x))+
-    geom_boxplot(fill = NA,col = color,size = size, na.rm = TRUE)+
-    geom_jitter(alpha = 0.3,width = width, na.rm = TRUE)+
-    labs(x="",y= var_name, title = title)+
-    theme_bw()+
-    theme(panel.border = element_blank(),
-          axis.text.x = element_blank(),
-          axis.ticks.x = element_blank(),
-          panel.grid.major.x = element_blank(),
-          panel.grid.minor.x = element_blank())
+                         title = "") {
+  ggplot(tibble(x = x), aes(x = 1, y = x)) +
+    geom_boxplot(fill = NA, col = color, size = size, na.rm = TRUE) +
+    geom_jitter(alpha = 0.3, width = width, na.rm = TRUE) +
+    labs(x = "", y = var_name, title = title) +
+    theme_bw() +
+    theme(
+      panel.border = element_blank(),
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank()
+    )
 }
 
 
@@ -55,7 +58,8 @@ cont_boxplot <- function(x,
 #'
 #' @author Emanuel Sommer
 #'
-#' @examples  hist_cont(rchisq(100, df = 0.5), ttl = "Test-title", range_min = -4, range_max = 3)
+#' @examples
+#' hist_cont(rchisq(100, df = 0.5), ttl = "Test-title", range_min = -4, range_max = 3)
 hist_cont <- function(x,
                       var_name = "",
                       color = "darkviolet",
@@ -65,123 +69,158 @@ hist_cont <- function(x,
                       alpha = 0.8,
                       range_min = NULL,
                       range_max = NULL,
-                      rel = FALSE){
-  #check input
-  if(!is.numeric(x)){"x must be numeric!"}
-  if(!is.logical(rel)){stop("rel must be logical!")}
-  if(!(is.null(range_max) | is.numeric(range_max))){stop("The ranges must be numeric if given.")}
-  if(!(is.null(range_min) | is.numeric(range_min))){stop("The ranges must be numeric if given.")}
+                      rel = FALSE) {
+  # check input
+  if (!is.numeric(x)) {
+    "x must be numeric!"
+  }
+  if (!is.logical(rel)) {
+    stop("rel must be logical!")
+  }
+  if (!(is.null(range_max) | is.numeric(range_max))) {
+    stop("The ranges must be numeric if given.")
+  }
+  if (!(is.null(range_min) | is.numeric(range_min))) {
+    stop("The ranges must be numeric if given.")
+  }
   # actual function
-  if(rel){
-    if((ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+  if (rel) {
+    if ((ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   } else {
-    if((ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE))){
-       ggplot(tibble(x = x),aes(x = x))+
-          geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-          labs(y="count",
-               x= var_name,
-               title = ttl,
-               caption = paste("Number of bins:",bin_num))+
-          theme_bw()+
-          theme(legend.position="bottom",
-                panel.border = element_blank(),
-                axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),-Inf,range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),Inf,range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+    if ((ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), -Inf, range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), Inf, range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   }
 }
-
-
-
-
-

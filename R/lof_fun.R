@@ -23,33 +23,45 @@
 #' @export
 #'
 #' @author Emanuel Sommer
-lof_fun <- function(data, col1 = "darkviolet"){
-  if(!is.data.frame(data)){stop("The input is not a data frame!")}
+lof_fun <- function(data, col1 = "darkviolet") {
+  if (!is.data.frame(data)) {
+    stop("The input is not a data frame!")
+  }
   # omit rows with missing values:
   data <- na.omit(data)
   # dimensions of the input:
   dim_data <- dim(data)
   # get the classes of the columns:
-  classes <- sapply(1:dim_data[2],function(i){class(data[[names(data)[i]]])})
+  classes <- sapply(1:dim_data[2], function(i) {
+    class(data[[names(data)[i]]])
+  })
   # The following is true when the input has to be converted to a factor:
-  classes_trans <- dplyr::if_else(classes %in% c("numeric","integer","factor"),FALSE,TRUE)
-  new_data <- dplyr::mutate_if(data,classes_trans,as.factor)
+  classes_trans <- dplyr::if_else(classes %in% c("numeric", "integer", "factor"), FALSE, TRUE)
+  new_data <- dplyr::mutate_if(data, classes_trans, as.factor)
   # tuning vector for the k's in the local outlier factor algorithm
-  tune_k <- seq(from = max(10,round(sqrt(dim_data[1])) - 10),
-                to = round(sqrt(dim_data[1])) + 10,
-                by = 1)
+  tune_k <- seq(
+    from = max(10, round(sqrt(dim_data[1])) - 10),
+    to = round(sqrt(dim_data[1])) + 10,
+    by = 1
+  )
   # differenciate between only numeric inputs and mixed ones: (gower distance metric)
-  if(all(classes %in% c("numeric","integer"))){
-    lof_scores <- sapply(tune_k,function(k){dbscan::lof(scale(data),k = k)})
+  if (all(classes %in% c("numeric", "integer"))) {
+    lof_scores <- sapply(tune_k, function(k) {
+      dbscan::lof(scale(data), k = k)
+    })
   } else {
-    gower_dist <- cluster::daisy(new_data, metric = "gower",warnType = FALSE)
-    lof_scores <- sapply(tune_k,function(k){dbscan::lof(gower_dist,k = k)})
+    gower_dist <- cluster::daisy(new_data, metric = "gower", warnType = FALSE)
+    lof_scores <- sapply(tune_k, function(k) {
+      dbscan::lof(gower_dist, k = k)
+    })
   }
   # average over the different tuning parameters:
   aggregated_lofs <- rowMeans(lof_scores, na.rm = T)
   # quick visualization
-  boxplot_scores <- cont_boxplot(aggregated_lofs, var_name = "LOF-scores",
-                                 color = col1)
+  boxplot_scores <- cont_boxplot(aggregated_lofs,
+    var_name = "LOF-scores",
+    color = col1
+  )
   return(list(
     scores = aggregated_lofs,
     boxplot = boxplot_scores
@@ -66,11 +78,11 @@ lof_fun <- function(data, col1 = "darkviolet"){
 #' @export
 #'
 #' @author Emanuel Sommer
-extract_rows_score <- function(data,lof_list,threshold = 1){
+extract_rows_score <- function(data, lof_list, threshold = 1) {
   data <- na.omit(data)
   data$LOF_scores <- lof_list$scores
   extract_log <- lof_list$scores > threshold
-  res <- dplyr::arrange(data[extract_log,],desc(LOF_scores))
+  res <- dplyr::arrange(data[extract_log, ], desc(LOF_scores))
   return(res)
 }
 
@@ -90,18 +102,20 @@ extract_rows_score <- function(data,lof_list,threshold = 1){
 #' @import ggplot2
 #'
 #' @author Emanuel Sommer
-lof_vis <- function(data,lof_list,col_low = "deeppink",col_high = "darkviolet"){
-  if(dim(data)[2] != 2){stop("Data has not the required dimensions.")}
+lof_vis <- function(data, lof_list, col_low = "deeppink", col_high = "darkviolet") {
+  if (dim(data)[2] != 2) {
+    stop("Data has not the required dimensions.")
+  }
   data <- na.omit(data)
   data$LOF_scores <- lof_list$scores
   data_names <- names(data)
-  ggplot(data = data,aes_string(x = data_names[1], y = data_names[2], size = "LOF_scores", col = "LOF_scores")) +
+  ggplot(data = data, aes_string(x = data_names[1], y = data_names[2], size = "LOF_scores", col = "LOF_scores")) +
     geom_point() +
     scale_color_gradient(low = col_low, high = col_high, name = "LOF score") +
-    labs(size = "LOF score")+
-    theme_bw()+
-    theme(panel.border = element_blank(),
-          axis.line = element_line(color = "black"))
+    labs(size = "LOF score") +
+    theme_bw() +
+    theme(
+      panel.border = element_blank(),
+      axis.line = element_line(color = "black")
+    )
 }
-
-

@@ -26,118 +26,158 @@ hist_date <- function(x,
                       alpha = 0.8,
                       range_min = NULL,
                       range_max = NULL,
-                      rel = FALSE){
-  #check input
-  if(!lubridate::is.Date(x)){stop("x must be Date!")}
-  if(!is.logical(rel)){stop("rel must be logical!")}
-  if(!(is.null(range_max) | lubridate::is.Date(range_max))){stop("The ranges must be Date if given.")}
-  if(!(is.null(range_min) | lubridate::is.Date(range_min))){stop("The ranges must be Date if given.")}
+                      rel = FALSE) {
+  # check input
+  if (!lubridate::is.Date(x)) {
+    stop("x must be Date!")
+  }
+  if (!is.logical(rel)) {
+    stop("rel must be logical!")
+  }
+  if (!(is.null(range_max) | lubridate::is.Date(range_max))) {
+    stop("The ranges must be Date if given.")
+  }
+  if (!(is.null(range_min) | lubridate::is.Date(range_min))) {
+    stop("The ranges must be Date if given.")
+  }
   # actual function
-  if(rel){
-    if((ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+  if (rel) {
+    if ((ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   } else {
-    if((ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.Date("0000-01-01"),range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),as.Date("9999-12-31"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+    if ((ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.Date("0000-01-01"), range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), as.Date("9999-12-31"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   }
 }
@@ -163,126 +203,166 @@ hist_date <- function(x,
 #'
 #' @author Emanuel Sommer
 hist_datetime <- function(x,
-                      var_name = "",
-                      color = "darkviolet",
-                      range_col = "black",
-                      bin_num = 100,
-                      ttl = "",
-                      alpha = 0.8,
-                      range_min = NULL,
-                      range_max = NULL,
-                      rel = FALSE){
-  #check input
-  if(!lubridate::is.POSIXct(x)){stop("x must be POSIXct!")}
-  if(!is.logical(rel)){stop("rel must be logical!")}
-  if(!(is.null(range_max) | lubridate::is.POSIXct(range_max))){stop("The ranges must be POSIXct if given.")}
-  if(!(is.null(range_min) | lubridate::is.POSIXct(range_min))){stop("The ranges must be POSIXct if given.")}
+                          var_name = "",
+                          color = "darkviolet",
+                          range_col = "black",
+                          bin_num = 100,
+                          ttl = "",
+                          alpha = 0.8,
+                          range_min = NULL,
+                          range_max = NULL,
+                          rel = FALSE) {
+  # check input
+  if (!lubridate::is.POSIXct(x)) {
+    stop("x must be POSIXct!")
+  }
+  if (!is.logical(rel)) {
+    stop("rel must be logical!")
+  }
+  if (!(is.null(range_max) | lubridate::is.POSIXct(range_max))) {
+    stop("The ranges must be POSIXct if given.")
+  }
+  if (!(is.null(range_min) | lubridate::is.POSIXct(range_min))) {
+    stop("The ranges must be POSIXct if given.")
+  }
   # actual function
-  if(rel){
-    if((ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x, y = ..density..))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="density",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+  if (rel) {
+    if ((ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x, y = ..density..)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "density",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   } else {
-    if((ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the lower range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical line represents the upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
-    } else if((!(ifelse(is.null(range_min),as.POSIXct("0000-01-01 00:00:00"),range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max),as.POSIXct("9999-12-31 23:59:59"),range_max) > max(x, na.rm = TRUE)))){
-      ggplot(tibble(x = x),aes(x = x))+
-        geom_histogram(bins = bin_num,fill = color,alpha = alpha, na.rm = TRUE)+
-        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col)+
-        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col)+
-        labs(y="count",
-             x= var_name,
-             title = ttl,
-             subtitle = "The vertical lines represent the lower and upper range bound.",
-             caption = paste("Number of bins:",bin_num))+
-        theme_bw()+
-        theme(legend.position="bottom",
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"))
+    if ((ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE)) && (ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE))) && (ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the lower range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE)) && (!(ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical line represents the upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
+    } else if ((!(ifelse(is.null(range_min), as.POSIXct("0000-01-01 00:00:00"), range_min) < min(x, na.rm = TRUE))) && (!(ifelse(is.null(range_max), as.POSIXct("9999-12-31 23:59:59"), range_max) > max(x, na.rm = TRUE)))) {
+      ggplot(tibble(x = x), aes(x = x)) +
+        geom_histogram(bins = bin_num, fill = color, alpha = alpha, na.rm = TRUE) +
+        geom_vline(xintercept = range_max, linetype = "longdash", col = range_col) +
+        geom_vline(xintercept = range_min, linetype = "longdash", col = range_col) +
+        labs(
+          y = "count",
+          x = var_name,
+          title = ttl,
+          subtitle = "The vertical lines represent the lower and upper range bound.",
+          caption = paste("Number of bins:", bin_num)
+        ) +
+        theme_bw() +
+        theme(
+          legend.position = "bottom",
+          panel.border = element_blank(),
+          axis.line = element_line(color = "black")
+        )
     }
   }
 }
